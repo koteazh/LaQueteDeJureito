@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Character
 {
-	public abstract class ACharacterStats : MonoBehaviour
+	public abstract class ACharacterStats : AStats
 	{
 		protected GameObject levelUpPanel;
 		private Dictionary<string, int> characterStats;
@@ -13,12 +13,8 @@ namespace Character
 		private const string characterClass = "";
 
 		public abstract void LevelUp();
-		public abstract int GetCharacterStats (string statKey);
 		public abstract int GetStatsIncrease (string statKey);
-		public abstract void PrintStats ();
 		public abstract void SetLevelUpPanel(GameObject _levelUpPanel);
-		public abstract void SetStatus(E_CharacterStatus _status);
-		public abstract E_CharacterStatus GetStatus();
 	}
 }
 

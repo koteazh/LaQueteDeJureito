@@ -91,7 +91,7 @@ public class GameCursor : MonoBehaviour {
 
 
 			//				LEVEL UP CALL
-			selectedCharacter.GetComponent<ACharacterStats> ().LevelUp ();
+			//selectedCharacter.GetComponent<ACharacterStats> ().LevelUp ();
 
 		}
     }
