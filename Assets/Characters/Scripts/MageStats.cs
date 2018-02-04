@@ -8,6 +8,8 @@ namespace Character {
 	
 	public class MageStats : ACharacterStats {
 		private const string characterClass = "Mage";
+		private Armor armor = new Armor();
+		private Weapon weapon = new Weapon();
 		private Dictionary<string, int> characterStats = new Dictionary<string, int>();
 		private static readonly Dictionary<string, int> statsIncrease = new Dictionary<string, int>
 		{

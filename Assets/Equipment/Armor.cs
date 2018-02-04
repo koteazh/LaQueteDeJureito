@@ -3,25 +3,27 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class Armor : MonoBehaviour {
-	public enum ArmorType { Light, Medium, Heavy }
-	public enum ArmorQuality { Poor, Common, Excellent }
+	public enum E_ArmorType { Light, Medium, Heavy }
+	public enum E_ArmorQuality { Poor, Common, Excellent }
 
-	public ArmorType type;
-	public ArmorQuality quality;
+	public E_ArmorType type;
+	public E_ArmorQuality quality;
 	public int physicalProtection { get; private set; }
 	public int magicalProtection { get; private set; }
 	public int congestion { get; private set; }
 	public string statRequirementName  { get; private set; }
 	public int statRequirementValue  { get; private set; }
 
-	void Start()
+	public Armor GetArmor(E_ArmorType _type, E_ArmorQuality _quality)
 	{
+		type = _type;
+		quality = _quality;
 		switch (type)
 		{
-			case ArmorType.Light:
+			case E_ArmorType.Light:
 				switch (quality)
 				{
-					case ArmorQuality.Poor:
+					case E_ArmorQuality.Poor:
 						physicalProtection = 1;
 						magicalProtection = 3;
 						congestion = 0;
@@ -29,7 +31,7 @@ public class Armor : MonoBehaviour {
 						statRequirementValue = 15;
 						break;
 
-					case ArmorQuality.Common:
+					case E_ArmorQuality.Common:
 						physicalProtection = 2;
 						magicalProtection = 4;
 						congestion = 0;
@@ -37,7 +39,7 @@ public class Armor : MonoBehaviour {
 						statRequirementValue = 20;
 						break;
 
-					case ArmorQuality.Excellent:
+					case E_ArmorQuality.Excellent:
 						physicalProtection = 3;
 						magicalProtection = 5;
 						congestion = 1;
@@ -47,10 +49,10 @@ public class Armor : MonoBehaviour {
 				}
 				break;
 
-			case ArmorType.Medium:
+			case E_ArmorType.Medium:
 				switch (quality)
 				{
-					case ArmorQuality.Poor:
+					case E_ArmorQuality.Poor:
 						physicalProtection = 2;
 						magicalProtection = 2;
 						congestion = 1;
@@ -58,7 +60,7 @@ public class Armor : MonoBehaviour {
 						statRequirementValue = 20;
 						break;
 
-					case ArmorQuality.Common:
+					case E_ArmorQuality.Common:
 						physicalProtection = 3;
 						magicalProtection = 3;
 						congestion = 1;
@@ -66,7 +68,7 @@ public class Armor : MonoBehaviour {
 						statRequirementValue = 25;
 						break;
 
-					case ArmorQuality.Excellent:
+					case E_ArmorQuality.Excellent:
 						physicalProtection = 5;
 						magicalProtection = 5;
 						congestion = 2;
@@ -76,10 +78,10 @@ public class Armor : MonoBehaviour {
 				}
 				break;
 
-			case ArmorType.Heavy:
+			case E_ArmorType.Heavy:
 				switch (quality)
 				{
-					case ArmorQuality.Poor:
+					case E_ArmorQuality.Poor:
 						physicalProtection = 3;
 						magicalProtection = 2;
 						congestion = 3;
@@ -87,7 +89,7 @@ public class Armor : MonoBehaviour {
 						statRequirementValue = 10;
 						break;
 
-					case ArmorQuality.Common:
+					case E_ArmorQuality.Common:
 						physicalProtection = 5;
 						magicalProtection = 3;
 						congestion = 3;
@@ -95,7 +97,7 @@ public class Armor : MonoBehaviour {
 						statRequirementValue = 15;
 						break;
 
-					case ArmorQuality.Excellent:
+					case E_ArmorQuality.Excellent:
 						physicalProtection = 8;
 						magicalProtection = 5;
 						congestion = 4;
@@ -105,6 +107,7 @@ public class Armor : MonoBehaviour {
 				}
 				break;
 		}
+		return (this);
 	}
 }
 
