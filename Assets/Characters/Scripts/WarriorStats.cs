@@ -90,5 +90,10 @@ namespace Character {
 		{
 			return (status);
 		}
+
+		public override Weapon.E_WeaponType GetWeaponType()
+		{
+			return (weapon.GetWeaponType());
+		}
 	}
 }

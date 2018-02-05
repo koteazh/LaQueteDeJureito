@@ -6,18 +6,18 @@ public class Weapon : MonoBehaviour {
 	public enum E_WeaponType { Sword, Dagger, Bow, Magic }
 	public enum E_WeaponQuality { Poor, Common, Excellent }
 
-	public E_WeaponType type;
+	public E_WeaponType weaponType;
 	public E_WeaponQuality quality;
 	public int damage { get; private set; }
 	public int precision { get; private set; }
 	public string statRequirementName  { get; private set; }
 	public int statRequirementValue  { get; private set; }
 
-	public Weapon GetWeapon(E_WeaponType _type, E_WeaponQuality _quality)
+	public Weapon GetWeapon(E_WeaponType _weaponType, E_WeaponQuality _quality)
 	{
-		type = _type;
+		weaponType = _weaponType;
 		quality = _quality;
-		switch (type)
+		switch (weaponType)
 		{
 		case E_WeaponType.Sword:
 			switch (quality)
@@ -124,5 +124,15 @@ public class Weapon : MonoBehaviour {
 			break;
 		}
 		return (this);
+	}
+
+	public E_WeaponType GetWeaponType()
+	{
+		return (weaponType);
+	}
+
+	public E_WeaponQuality GetWeaponQuality()
+	{
+		return (quality);
 	}
 }

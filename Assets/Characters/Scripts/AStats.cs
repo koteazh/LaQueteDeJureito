@@ -6,7 +6,7 @@ namespace Character
 	public abstract class AStats : MonoBehaviour
 	{
 		private Dictionary<string, int> characterStats;
-		protected int level;
+		[SerializeField] protected int level;
 		protected E_CharacterStatus status;
 		private const string characterClass = "";
 
@@ -14,6 +14,7 @@ namespace Character
 		public abstract void PrintStats ();
 		public abstract void SetStatus(E_CharacterStatus _status);
 		public abstract E_CharacterStatus GetStatus();
+		public abstract Weapon.E_WeaponType GetWeaponType ();
 	}
 }
 

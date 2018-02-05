@@ -8,6 +8,7 @@ namespace Character {
 	
 	public class EnemyRangerStats : AEnemyStats {
 		private const string characterClass = "Ranger";
+		private Weapon.E_WeaponType weaponType = Weapon.E_WeaponType.Bow;
 		public int Life = 25;
 		public int Strength = 13;
 		public int Dexterity = 25;
@@ -63,6 +64,16 @@ namespace Character {
 		public override E_CharacterStatus GetStatus()
 		{
 			return (status);
+		}
+
+		public override Weapon.E_WeaponType GetWeaponType()
+		{
+			return (weaponType);
+		}
+
+		public override string GetCharacterClass ()
+		{
+			return characterClass;
 		}
 	}
 }

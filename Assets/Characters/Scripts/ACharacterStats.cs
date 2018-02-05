@@ -8,8 +8,6 @@ namespace Character
 		protected GameObject levelUpPanel;
 		private Dictionary<string, int> characterStats;
 		private static readonly Dictionary<string, int> statsIncrease = null;
-		protected int level;
-		protected E_CharacterStatus status;
 		private const string characterClass = "";
 
 		public abstract void LevelUp();

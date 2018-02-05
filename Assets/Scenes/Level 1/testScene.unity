@@ -3493,6 +3493,15 @@ Prefab:
       propertyPath: m_Name
       value: EnemyRanger
       objectReference: {fileID: 0}
+    - target: {fileID: 114322259002823296, guid: 649243b8b91447147a6ebf683294f773,
+        type: 2}
+      propertyPath: level
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1088024964602690, guid: 649243b8b91447147a6ebf683294f773, type: 2}
+      propertyPath: m_TagString
+      value: Enemy
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 649243b8b91447147a6ebf683294f773, type: 2}
   m_IsPrefabParent: 0
@@ -9423,6 +9432,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02f102ec6f5a90e43a5bafe1344309a1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  level: 0
 --- !u!4 &392668148 stripped
 Transform:
   m_PrefabParentObject: {fileID: 4077399597902464, guid: 9bd8e2dab1fd65f43b7fa579effdf76b,
@@ -19360,6 +19370,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a4be92e9723d4934d811c0830ef95e49, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  level: 0
 --- !u!1001 &807638059
 Prefab:
   m_ObjectHideFlags: 0
@@ -22375,6 +22386,15 @@ Prefab:
       propertyPath: m_Name
       value: EnemyWarrior
       objectReference: {fileID: 0}
+    - target: {fileID: 114796125087008030, guid: 3d7201ff90ddfaa4f97d238d03149809,
+        type: 2}
+      propertyPath: level
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1346171472849576, guid: 3d7201ff90ddfaa4f97d238d03149809, type: 2}
+      propertyPath: m_TagString
+      value: Enemy
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 3d7201ff90ddfaa4f97d238d03149809, type: 2}
   m_IsPrefabParent: 0
@@ -22412,6 +22432,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   pauseMenu: {fileID: 1176071191}
+--- !u!114 &931669794
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 931669788}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5c9b7a2210e844942b6d726502fb9593, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  armorList: []
+  weaponList: []
 --- !u!1 &932396184
 GameObject:
   m_ObjectHideFlags: 0
@@ -28281,6 +28314,15 @@ Prefab:
       propertyPath: m_Name
       value: EnemyAssassin
       objectReference: {fileID: 0}
+    - target: {fileID: 114512871407018012, guid: f9d94fc8de8854f4facad2f99f696259,
+        type: 2}
+      propertyPath: level
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1244599002323444, guid: f9d94fc8de8854f4facad2f99f696259, type: 2}
+      propertyPath: m_TagString
+      value: Enemy
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: f9d94fc8de8854f4facad2f99f696259, type: 2}
   m_IsPrefabParent: 0
@@ -32441,6 +32483,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 75ed5a220497149478c33cf09b411feb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  level: 0
 --- !u!4 &1400003338 stripped
 Transform:
   m_PrefabParentObject: {fileID: 4214347293841964, guid: 57a13b1943a97d24ebeb9ba9327c4c1b,
@@ -32984,6 +33027,15 @@ Prefab:
     - target: {fileID: 1782543379376358, guid: 8426be98baddcd1449ffa9ea92b5251f, type: 2}
       propertyPath: m_Name
       value: EnemyMage
+      objectReference: {fileID: 0}
+    - target: {fileID: 114230331266475086, guid: 8426be98baddcd1449ffa9ea92b5251f,
+        type: 2}
+      propertyPath: level
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1782543379376358, guid: 8426be98baddcd1449ffa9ea92b5251f, type: 2}
+      propertyPath: m_TagString
+      value: Enemy
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 8426be98baddcd1449ffa9ea92b5251f, type: 2}
@@ -40526,6 +40578,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0a5a9834e5eb57a479d171996cd0ea4f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  level: 0
 --- !u!1001 &1760121251
 Prefab:
   m_ObjectHideFlags: 0
