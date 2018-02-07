@@ -6,28 +6,17 @@ using UnityEngine.UI;
 
 namespace Character {
 	
-	public class EnemyMageStats : AEnemyStats {
-		private const string characterClass = "Mage";
-		private Weapon.E_WeaponType weaponType = Weapon.E_WeaponType.Magic;
-		public int Life = 25;
-		public int Strength = 20;
-		public int Dexterity = 20;
-		public int Defense = 5;
-		public int Resistance = 17;
-		public int Agility = 13;
-		public int Movement = 5;
+	public class EnemyAssassinStats : AEnemyStats {
+		private const string characterClass = "Assassin";
+		private Weapon.E_WeaponType weaponType = Weapon.E_WeaponType.Dagger;
+		public int Life = 30;
+		public int Strength = 15;
+		public int Dexterity = 15;
+		public int Defense = 7;
+		public int Resistance = 13;
+		public int Agility = 20;
+		public int Movement = 6;
 		private Dictionary<string, int> characterStats = new Dictionary<string, int>();
-		private static readonly Dictionary<string, int> statsIncrease = new Dictionary<string, int>
-		{
-			{ "Life", 35 },
-			{ "Strength", 0 },
-			{ "Intelligence", 75 },
-			{ "Dexterity", 40 },
-			{ "Defense", 15 },
-			{ "Resistance", 65 },
-			{ "Agility", 30 },
-			{ "Movement", 0 },
-		};			
 
 		void Awake() {
 			DontDestroyOnLoad(transform.gameObject);
@@ -42,6 +31,7 @@ namespace Character {
 			characterStats ["Resistance"] = Resistance;
 			characterStats ["Agility"] = Agility;
 			characterStats ["Movement"] = Movement;
+			status = E_CharacterStatus.READY;
 			level = 1;
 		}
 

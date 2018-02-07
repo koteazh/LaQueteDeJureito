@@ -57,6 +57,9 @@ public class AiPath {
 		path = path.GetFirstNode (path);
 		GetLastsChildren (lastNodes, path);
 		lastNodes = lastNodes.OrderBy (x => x.pathValue).ToList ();
+		foreach (AiPath node in lastNodes) {
+			Debug.Log (node.pathValue);
+		}
 		AiPath shortestPath = lastNodes [0];
 		while (!Object.ReferenceEquals(null, shortestPath.parent)) {
 			shortestPathCaseId.Add(shortestPath.caseId);

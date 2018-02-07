@@ -6,17 +6,28 @@ using UnityEngine;
 
 public class AiController : MonoBehaviour {
 
-	private GameObject[] mapToTarget;
+	private List <GameObject> charactersInRange = new List<GameObject> ();
+	private Dictionary<GameObject, AiPath> pathsToTarget = new Dictionary<GameObject, AiPath> ();
 	private GameObject target;
 	private Vector3 movementTarget;
+	private GameObject closestTarget;
+	private int smallestMovementCost = -1;
 	private List<int> shortestPath;
+	private bool isTargetSelected = false;
 	private bool is_moving = false;
 	private bool target_reached = false;
 	int i = 0;
 
+	public void SetIsTargetSelected (bool _isTargetSelected)
+	{
+		isTargetSelected = _isTargetSelected;
+	}
+
 	private int GetIdByCoord(float x, float y)
 	{
-		return (int) (((x - 5) / 10)	+ (((y - 5) / 10) * 25));
+		int _x = (int)Math.Round (x, 0);
+		int _y = (int)Math.Round (y, 0);
+		return (int) (((_x - 5) / 10)	+ (((_y - 5) / 10) * 25));
 	}
 
 	private Vector2 GetCoordById(int id)
@@ -38,10 +49,69 @@ public class AiController : MonoBehaviour {
 		
 	private int GetTargetDistance (GameObject targetToReach)
 	{
-		int xDiff = (int) Math.Abs(gameObject.transform.position.x - targetToReach.transform.position.x) / 10;
-		int yDiff = (int) Math.Abs(gameObject.transform.position.z - targetToReach.transform.position.z) / 10;
+		int _x = (int)(Math.Round (gameObject.transform.position.x, 0) - Math.Round (targetToReach.transform.position.x, 0));
+		int _y = (int)(Math.Round (gameObject.transform.position.z, 0) - Math.Round (targetToReach.transform.position.z, 0));
+		int xDiff = (int) Math.Abs(_x) / 10;
+		int yDiff = (int) Math.Abs(_y) / 10;
 		int totalDiff = xDiff + yDiff;
 		return (totalDiff);
+	}
+
+	private void OnDrawGizmos() {
+		Gizmos.color = Color.red;
+			//Use the same vars you use to draw your Overlap SPhere to draw your Wire Sphere.
+			Gizmos.DrawWireSphere (transform.position, 5f);
+	}
+
+	public void GetCharactersInRange()
+	{
+		int totalMovementCost = 0;
+		GameObject[] characterPresent = GameObject.FindGameObjectsWithTag ("Character");
+		Collider[] colliders;
+
+		foreach (GameObject potentialTarget in characterPresent) {
+			AiPath path = new AiPath (GetIdByCoord(gameObject.transform.position.x, gameObject.transform.position.z));
+
+			target = potentialTarget;
+			print(target);
+			GetPathsToTarget (0, path);
+			shortestPath = path.GetShortestPath (path);
+			totalMovementCost = 0;
+			foreach (int caseId in shortestPath) {
+				GameObject terrainCase = GameObject.Find ("Case_" + caseId);
+				totalMovementCost += terrainCase.GetComponent<Case> ().getType().movement_cost;
+
+				if((colliders = Physics.OverlapSphere(Get3dCoordById(caseId), 5f)).Length > 1)
+				{
+					foreach(Collider collider in colliders)
+					{
+						GameObject go = collider.gameObject;
+						if (go.tag == "Character" || go.tag == "Enemy") {
+							totalMovementCost += 100;
+						}
+					}
+				}
+
+			}
+			if (smallestMovementCost == -1 || totalMovementCost < smallestMovementCost)
+				closestTarget = potentialTarget;
+			if (totalMovementCost <= gameObject.GetComponent<Character.AEnemyStats> ().GetCharacterStats ("Movement")) {
+				charactersInRange.Add (potentialTarget);
+				pathsToTarget.Add (potentialTarget, path);
+			}
+		}
+		if (charactersInRange.Count >= 2) {
+			print ("2+");
+			SelectTarget (charactersInRange);
+		} else if (charactersInRange.Count == 1) {
+			print ("1");
+			target = charactersInRange [0];
+		} else {
+			print ("0");
+			target = closestTarget;
+		}
+		isTargetSelected  = true;
+
 	}
 
 	private void SelectKillableTarget (List<GameObject> killableTargetList, string defenseStatName)
@@ -56,8 +126,9 @@ public class AiController : MonoBehaviour {
 		valueToCompare = killableTargetList [0].GetComponent<Character.ACharacterStats> ().GetCharacterStats("Agility");
 		foreach (GameObject possibleTarget in killableTargetList)
 		{
-			if (valueToCompare == possibleTarget.GetComponent<Character.ACharacterStats> ().GetCharacterStats ("Agility"))
+			if (valueToCompare == possibleTarget.GetComponent<Character.ACharacterStats> ().GetCharacterStats ("Agility")) {
 				targetsAgility.Add (possibleTarget);
+			}
 		}
 
 		if (targetsAgility.Count >= 2)
@@ -101,7 +172,7 @@ public class AiController : MonoBehaviour {
 			target = targetsAgility [0];
 	}
 
-	private void SelectDamageableTarget (GameObject[] targetArray, string defenseStatName)
+	private void SelectDamageableTarget (List<GameObject> targetArray, string defenseStatName)
 	{
 		List<GameObject> targetList = new List<GameObject>();
 		List<GameObject> targetsLife = new List<GameObject>();
@@ -124,11 +195,11 @@ public class AiController : MonoBehaviour {
 
 		if (targetsDefense.Count >= 2)
 		{
-			targetsDefense = targetsDefense.OrderBy (o => o.GetComponent<Character.ACharacterStats> ().GetCharacterStats ("health")).ToList ();
-			valueToCompare = targetsDefense [0].GetComponent<Character.ACharacterStats> ().GetCharacterStats ("health");
+			targetsDefense = targetsDefense.OrderBy (o => o.GetComponent<Character.ACharacterStats> ().GetCharacterStats ("Life")).ToList ();
+			valueToCompare = targetsDefense [0].GetComponent<Character.ACharacterStats> ().GetCharacterStats ("Life");
 			foreach (GameObject possibleTarget in targetsDefense)
 			{
-				if (valueToCompare == possibleTarget.GetComponent<Character.ACharacterStats> ().GetCharacterStats ("health"))
+				if (valueToCompare == possibleTarget.GetComponent<Character.ACharacterStats> ().GetCharacterStats ("Life"))
 					targetsLife.Add (possibleTarget);
 			}
 
@@ -163,18 +234,16 @@ public class AiController : MonoBehaviour {
 			target = targetsDefense [0];
 	}
 
-	private void SelectTarget ()
+	public GameObject SelectTarget (List<GameObject> targetList)
 	{
-		GameObject[] targetList;
 		List<GameObject> killableTargetList = new List<GameObject>();
 		int nearestTarget;
 		int targetDistance;
 		int aiDamage;
-		int targetEffectiveHealth;
+		int targetEffectiveLife;
 		string defenseStatName;
 		Character.AEnemyStats aiStats = gameObject.GetComponent<Character.AEnemyStats> ();
 
-		targetList = GameObject.FindGameObjectsWithTag("Character");
 		aiDamage = aiStats.GetCharacterStats("Strength");
 		if (aiStats.GetWeaponType () == Weapon.E_WeaponType.Magic)
 			defenseStatName = "Resistance";
@@ -182,8 +251,8 @@ public class AiController : MonoBehaviour {
 			defenseStatName = "Defense";
 		foreach (GameObject possibleTarget in targetList)
 		{
-			/*targetEffectiveHealth = possibleTarget.GetComponent<Character.ACharacterStats> ().GetCharacterStats ("Health") + possibleTarget.GetComponent<Character.ACharacterStats> ().GetCharacterStats (defenseStatName);
-			if (targetEffectiveHealth - aiDamage <= 0)*/
+			targetEffectiveLife = possibleTarget.GetComponent<Character.ACharacterStats> ().GetCharacterStats ("Life") + possibleTarget.GetComponent<Character.ACharacterStats> ().GetCharacterStats (defenseStatName);
+			if (targetEffectiveLife - aiDamage <= 0)
 				killableTargetList.Add(possibleTarget);
 		}
 
@@ -193,7 +262,7 @@ public class AiController : MonoBehaviour {
 			target = killableTargetList[0];
 		else
 			SelectDamageableTarget (targetList, defenseStatName);
-
+		return (target);
 /*			SELECTION DE LA CIBLE LA PLUS PROCHE
  		nearestTarget = -1;
 		target = targetList [0];
@@ -207,6 +276,10 @@ public class AiController : MonoBehaviour {
 			}
 		}
 */
+	}
+
+	private void AttackTarget ()
+	{
 	}
 
 	private Vector2 GetDirection ()
@@ -223,12 +296,23 @@ public class AiController : MonoBehaviour {
 		Vector2 direction = GetDirection();
 		int targetDistance = GetTargetDistance(target);
 		Vector2 position = GetCoordById (_parent.caseId);
+		Collider[] colliders;
 
 		movementCount++;
 		if (position.x != target.transform.position.x) {
 			GameObject terrainCase = GameObject.Find ("Case_" + GetIdByCoord (position.x + 10 * direction.x, position.y));
 			int id = terrainCase.GetComponent<Case> ().case_id;
 			int pathValue = terrainCase.GetComponent<Case> ().getType().movement_cost + _parent.pathValue;
+			if((colliders = Physics.OverlapSphere(Get3dCoordById(id), 5f)).Length > 1)
+			{
+				foreach(Collider collider in colliders)
+				{
+					GameObject go = collider.gameObject; 
+					if (go.tag == "Character" || go.tag == "Enemy") {
+						pathValue = 100+ _parent.pathValue;
+					}
+				}
+			}
 			AiPath child1 = new AiPath (id, pathValue);
 			child1.parent = _parent;
 			_parent.Add (0, child1);
@@ -240,6 +324,16 @@ public class AiController : MonoBehaviour {
 			GameObject terrainCase = GameObject.Find ("Case_" + GetIdByCoord (position.x, position.y + 10 * direction.y));
 			int id = terrainCase.GetComponent<Case> ().case_id;
 			int pathValue = terrainCase.GetComponent<Case> ().getType().movement_cost + _parent.pathValue;
+			if((colliders = Physics.OverlapSphere(Get3dCoordById(id), 5f)).Length > 1)
+			{
+				foreach(Collider collider in colliders)
+				{
+					GameObject go = collider.gameObject;
+					if (go.tag == "Character" || go.tag == "Enemy") {
+						pathValue = 100+ _parent.pathValue;
+					}
+				}
+			}
 			AiPath child2 = new AiPath (id, pathValue);
 			child2.parent = _parent;
 			_parent.Add (1, child2);
@@ -269,8 +363,9 @@ public class AiController : MonoBehaviour {
 			gameObject.GetComponent<Animator> ().SetBool ("isDead", false);
 			i++;
 		}
-		if (Input.GetMouseButtonDown(0)) {
-/*			if (i == 0)
+		if (isTargetSelected == true) {
+/*				TEST ANIMATIONS
+			if (i == 0)
 				gameObject.GetComponent<Animator> ().SetBool ("hasDodge", true);
 			if (i == 1)
 				gameObject.GetComponent<Animator>().SetBool("isHit", true);
@@ -282,14 +377,14 @@ public class AiController : MonoBehaviour {
 				gameObject.GetComponent<Animator>().SetBool("isMoving", true);
 				i++;
 			}
-							*/
-			SelectTarget ();
-		/*			SelectTarget ();
-			AiPath Path = new AiPath (GetIdByCoord(gameObject.transform.position.x, gameObject.transform.position.z));
-			GetPathsToTarget (0, Path);
+*/
+			print(target);
+			AiPath Path = pathsToTarget[target];
+//			GetPathsToTarget (0, Path);
 			shortestPath = Path.GetShortestPath(Path);
 			movementTarget = Get3dCoordById (shortestPath[0]);
 			is_moving = true;
+			isTargetSelected = false;
 		}
 
 		if (target_reached == true)
@@ -299,6 +394,7 @@ public class AiController : MonoBehaviour {
 				is_moving = false;
 				target_reached = false;
 				gameObject.GetComponent<Animator>().SetBool("isMoving", false);
+				gameObject.GetComponent<Character.AEnemyStats>().SetStatus(Character.E_CharacterStatus.HAS_MOVED);
 				transform.LookAt (target.transform.position);
 			}
 			else
@@ -322,7 +418,11 @@ public class AiController : MonoBehaviour {
 			gameObject.GetComponent<Animator>().SetBool("isMoving", true);
 			if (shortestPath.Count > 0 && target_reached == false) {
 				transform.LookAt (movementTarget);
-			}*/
+			}
+		}
+		if (gameObject.GetComponent<Character.AEnemyStats> ().GetStatus () == Character.E_CharacterStatus.HAS_MOVED) {
+			AttackTarget ();
+			gameObject.GetComponent<Character.AEnemyStats>().SetStatus(Character.E_CharacterStatus.IS_WAITING);
 		}
 	}
 }

@@ -6,27 +6,27 @@ using UnityEngine.UI;
 
 namespace Character {
 	
-	public class EnemyRangerStats : AEnemyStats {
-		private const string characterClass = "Ranger";
-		private Weapon.E_WeaponType weaponType = Weapon.E_WeaponType.Bow;
+	public class EnemyMageStats : AEnemyStats {
+		private const string characterClass = "Mage";
+		private Weapon.E_WeaponType weaponType = Weapon.E_WeaponType.Magic;
 		public int Life = 25;
-		public int Strength = 13;
-		public int Dexterity = 25;
-		public int Defense = 7;
-		public int Resistance = 7;
-		public int Agility = 23;
-		public int Movement = 6;
+		public int Strength = 20;
+		public int Dexterity = 20;
+		public int Defense = 5;
+		public int Resistance = 17;
+		public int Agility = 13;
+		public int Movement = 5;
 		private Dictionary<string, int> characterStats = new Dictionary<string, int>();
 		private static readonly Dictionary<string, int> statsIncrease = new Dictionary<string, int>
 		{
-			{ "Life", 40 },
-			{ "Strength", 65 },
-			{ "Intelligence", 0 },
-			{ "Dexterity", 70 },
-			{ "Defense", 25 },
-			{ "Resistance", 10 },
-			{ "Agility", 35 },
-			{ "Movement", 5 },
+			{ "Life", 35 },
+			{ "Strength", 0 },
+			{ "Intelligence", 75 },
+			{ "Dexterity", 40 },
+			{ "Defense", 15 },
+			{ "Resistance", 65 },
+			{ "Agility", 30 },
+			{ "Movement", 0 },
 		};			
 
 		void Awake() {
@@ -42,6 +42,7 @@ namespace Character {
 			characterStats ["Resistance"] = Resistance;
 			characterStats ["Agility"] = Agility;
 			characterStats ["Movement"] = Movement;
+			status = E_CharacterStatus.READY;
 			level = 1;
 		}
 
