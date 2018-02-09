@@ -17,6 +17,13 @@ public class AiController : MonoBehaviour {
 	private bool is_moving = false;
 	private bool target_reached = false;
 	int i = 0;
+	private int mapRowLength;
+
+
+	void Start()
+	{
+		mapRowLength = GameObject.FindGameObjectWithTag("Terrain").GetComponent<TerrainRowLength>().GetTerrainTilesPerRow();
+	}
 
 	public void SetIsTargetSelected (bool _isTargetSelected)
 	{
@@ -27,23 +34,23 @@ public class AiController : MonoBehaviour {
 	{
 		int _x = (int)Math.Round (x, 0);
 		int _y = (int)Math.Round (y, 0);
-		return (int) (((_x - 5) / 10)	+ (((_y - 5) / 10) * 25));
+		return (int) (((_x - 5) / 10)	+ (((_y - 5) / 10) * mapRowLength));
 	}
 
 	private Vector2 GetCoordById(int id)
 	{
 		Vector2 coord = new Vector2 ();
-		coord.x = (id - ((id / 25) * 25)) * 10 + 5;
-		coord.y = (id / 25) * 10 + 5;
+		coord.x = (id - ((id / mapRowLength) * mapRowLength)) * 10 + 5;
+		coord.y = (id / mapRowLength) * 10 + 5;
 		return coord;
 	}
 
 	private Vector3 Get3dCoordById(int id)
 	{
 		Vector3 coord = new Vector3 ();
-		coord.x = (id - ((id / 25) * 25)) * 10 + 5;
+		coord.x = (id - ((id / mapRowLength) * mapRowLength)) * 10 + 5;
 		coord.y = 0.5f;
-		coord.z = (id / 25) * 10 + 5;
+		coord.z = (id / mapRowLength) * 10 + 5;
 		return coord;
 	}
 		
@@ -57,12 +64,6 @@ public class AiController : MonoBehaviour {
 		return (totalDiff);
 	}
 
-	private void OnDrawGizmos() {
-		Gizmos.color = Color.red;
-			//Use the same vars you use to draw your Overlap SPhere to draw your Wire Sphere.
-			Gizmos.DrawWireSphere (transform.position, 5f);
-	}
-
 	public void GetCharactersInRange()
 	{
 		int totalMovementCost = 0;
@@ -73,7 +74,6 @@ public class AiController : MonoBehaviour {
 			AiPath path = new AiPath (GetIdByCoord(gameObject.transform.position.x, gameObject.transform.position.z));
 
 			target = potentialTarget;
-			print(target);
 			GetPathsToTarget (0, path);
 			shortestPath = path.GetShortestPath (path);
 			totalMovementCost = 0;
@@ -93,22 +93,24 @@ public class AiController : MonoBehaviour {
 				}
 
 			}
-			if (smallestMovementCost == -1 || totalMovementCost < smallestMovementCost)
+			if (smallestMovementCost == -1 || totalMovementCost < smallestMovementCost) {
+				smallestMovementCost = totalMovementCost;
 				closestTarget = potentialTarget;
+			}
 			if (totalMovementCost <= gameObject.GetComponent<Character.AEnemyStats> ().GetCharacterStats ("Movement")) {
 				charactersInRange.Add (potentialTarget);
 				pathsToTarget.Add (potentialTarget, path);
 			}
 		}
 		if (charactersInRange.Count >= 2) {
-			print ("2+");
 			SelectTarget (charactersInRange);
 		} else if (charactersInRange.Count == 1) {
-			print ("1");
 			target = charactersInRange [0];
 		} else {
-			print ("0");
 			target = closestTarget;
+			AiPath path = new AiPath (GetIdByCoord(gameObject.transform.position.x, gameObject.transform.position.z));
+			GetPathsToTarget (0, path);
+			pathsToTarget [target] = path;
 		}
 		isTargetSelected  = true;
 
@@ -298,6 +300,8 @@ public class AiController : MonoBehaviour {
 		Vector2 position = GetCoordById (_parent.caseId);
 		Collider[] colliders;
 
+		if (targetDistance > 6)
+			targetDistance = 6;
 		movementCount++;
 		if (position.x != target.transform.position.x) {
 			GameObject terrainCase = GameObject.Find ("Case_" + GetIdByCoord (position.x + 10 * direction.x, position.y));
@@ -321,6 +325,7 @@ public class AiController : MonoBehaviour {
 			}
 		}
 		if (position.y != target.transform.position.z) {
+
 			GameObject terrainCase = GameObject.Find ("Case_" + GetIdByCoord (position.x, position.y + 10 * direction.y));
 			int id = terrainCase.GetComponent<Case> ().case_id;
 			int pathValue = terrainCase.GetComponent<Case> ().getType().movement_cost + _parent.pathValue;
@@ -378,12 +383,14 @@ public class AiController : MonoBehaviour {
 				i++;
 			}
 */
-			print(target);
 			AiPath Path = pathsToTarget[target];
-//			GetPathsToTarget (0, Path);
-			shortestPath = Path.GetShortestPath(Path);
-			movementTarget = Get3dCoordById (shortestPath[0]);
-			is_moving = true;
+			shortestPath = Path.GetMaxMovementPath(Path, gameObject.GetComponent<Character.AEnemyStats>().GetCharacterStats("Movement"));
+			if (shortestPath.Count == 0) {
+				gameObject.GetComponent<Character.AEnemyStats> ().SetStatus (Character.E_CharacterStatus.HAS_MOVED);
+			} else {
+				movementTarget = Get3dCoordById (shortestPath [0]);
+				is_moving = true;
+			}
 			isTargetSelected = false;
 		}
 
