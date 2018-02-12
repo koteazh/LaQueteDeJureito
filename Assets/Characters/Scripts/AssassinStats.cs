@@ -37,6 +37,7 @@ namespace Character {
 			characterStats ["Resistance"] = 13;
 			characterStats ["Agility"] = 20;
 			characterStats ["Movement"] = 6;
+			status = E_CharacterStatus.READY;
 			level = 1;
 		}
 
@@ -80,6 +81,22 @@ namespace Character {
 		public override void SetLevelUpPanel(GameObject _levelUpPanel)
 		{
 			levelUpPanel = _levelUpPanel;
+		}
+
+		public override void SetActionsPanel(GameObject _actionsPanel)
+		{
+			actionsPanel = _actionsPanel;
+		}
+
+		public override void SetActionsPanelActive(bool active)
+		{
+			actionsPanel.SetActive (active);
+		}
+
+		public override void DisableMovement(bool _interactable)
+		{
+			GameObject moveButton = actionsPanel.transform.Find ("MoveButton").gameObject;
+			moveButton.GetComponent<Button> ().interactable = _interactable;
 		}
 
 		public override void SetStatus(E_CharacterStatus _status)

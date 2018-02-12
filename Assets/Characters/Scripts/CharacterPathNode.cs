@@ -60,10 +60,46 @@ namespace Character
 			}
 		}
 
+		public void GetPathsToTarget(List<CharacterPathNode> targetPathsList, CharacterPathNode path, int target)
+		{
+			if (path.caseId == target) {
+				targetPathsList.Add (path);
+				return;
+			} else {
+				foreach (CharacterPathNode child in path.children) {
+					GetPathsToTarget (targetPathsList,child, target);
+				}
+				return;
+			}
+
+		}
+
+		public List<int> GetShortestPathToTarget(int target)
+		{
+			List<CharacterPathNode> targetPathsList = new List<CharacterPathNode> ();
+			List<int> shortestPathCaseId = new List<int> ();
+
+			GetPathsToTarget (targetPathsList, this, target);
+			if (targetPathsList.Count > 0) {
+				foreach (CharacterPathNode path in targetPathsList)
+				targetPathsList = targetPathsList.OrderBy (x => x.pathValue).ToList ();
+				CharacterPathNode shortestPath = targetPathsList [0];
+				while (!Object.ReferenceEquals(null, shortestPath.parent)) {
+					shortestPathCaseId.Add(shortestPath.caseId);
+					shortestPath = shortestPath.parent;
+				}
+				shortestPathCaseId.Reverse ();
+				foreach (int dir in shortestPathCaseId)
+				return shortestPathCaseId;
+			}
+			return null;
+		}
+
 		public List<int> GetShortestPath(CharacterPathNode path)
 		{
 			List<CharacterPathNode> lastNodes = new List<CharacterPathNode>();
 			List<int> shortestPathCaseId = new List<int> ();
+
 			path = path.GetFirstNode (path);
 			GetLastsChildren (lastNodes, path);
 			lastNodes = lastNodes.OrderBy (x => x.pathValue).ToList ();

@@ -14,7 +14,6 @@ public class PauseGame : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 		if (Input.GetButtonDown ("Escape")) {
-			Debug.Log (pauseMenu.activeInHierarchy);
 			if (!pauseMenu.activeInHierarchy) {
 				pauseMenu.SetActive (true);
 				Time.timeScale = 0;

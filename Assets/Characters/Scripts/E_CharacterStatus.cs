@@ -7,7 +7,8 @@ namespace Character
 		READY,
 		HAS_MOVED,
 		HAS_ATTACKED,
-		IS_WAITING
+		IS_WAITING,
+		IN_MOVEMENT
 	}
 }
 

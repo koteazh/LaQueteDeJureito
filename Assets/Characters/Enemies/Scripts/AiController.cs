@@ -73,6 +73,9 @@ public class AiController : MonoBehaviour {
 		foreach (GameObject potentialTarget in characterPresent) {
 			AiPath path = new AiPath (GetIdByCoord(gameObject.transform.position.x, gameObject.transform.position.z));
 
+			print (gameObject.transform.position.x);
+			print (gameObject.transform.position.z);
+
 			target = potentialTarget;
 			GetPathsToTarget (0, path);
 			shortestPath = path.GetShortestPath (path);
