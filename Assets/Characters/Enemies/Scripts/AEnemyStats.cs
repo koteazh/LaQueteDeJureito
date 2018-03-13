@@ -7,8 +7,6 @@ namespace Character
 	{
 		private Dictionary<string, int> characterStats;
 		private const string characterClass = "";
-
-		public abstract string GetCharacterClass ();
 	}
 }
 

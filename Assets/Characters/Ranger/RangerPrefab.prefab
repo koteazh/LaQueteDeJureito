@@ -703,6 +703,8 @@ GameObject:
   - component: {fileID: 95640655976650808}
   - component: {fileID: 114585858871588938}
   - component: {fileID: 136400475229976076}
+  - component: {fileID: 114046253507599870}
+  - component: {fileID: 114655440679624118}
   m_Layer: 0
   m_Name: RangerPrefab
   m_TagString: Character
@@ -1920,15 +1922,15 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1652543294826202}
-  m_LocalRotation: {x: 0, y: 0.08715578, z: 0, w: 0.9961947}
-  m_LocalPosition: {x: 205, y: 0.5, z: 65}
+  m_LocalRotation: {x: 0, y: 0.6427877, z: -0, w: -0.7660444}
+  m_LocalPosition: {x: 75, y: 0.5, z: 45}
   m_LocalScale: {x: 5, y: 5, z: 5}
   m_Children:
   - {fileID: 4625649552654852}
   - {fileID: 4373490217093412}
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 10, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 280, z: 0}
 --- !u!4 &4671255591204998
 Transform:
   m_ObjectHideFlags: 1
@@ -2281,6 +2283,18 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
+--- !u!114 &114046253507599870
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1652543294826202}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7e6398d6324ad0a448ef4d6b4811fa3e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  trap: {fileID: 0}
 --- !u!114 &114585858871588938
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2292,6 +2306,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0fc52fc4a3a011b488e1bbea155635da, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &114655440679624118
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1652543294826202}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 02f102ec6f5a90e43a5bafe1344309a1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  level: 1
 --- !u!136 &136400475229976076
 CapsuleCollider:
   m_ObjectHideFlags: 1

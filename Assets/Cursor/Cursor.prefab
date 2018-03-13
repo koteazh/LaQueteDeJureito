@@ -45,6 +45,7 @@ GameObject:
   - component: {fileID: 114634354736002128}
   - component: {fileID: 114719264131373032}
   - component: {fileID: 114625114909915902}
+  - component: {fileID: 114848582569491442}
   m_Layer: 0
   m_Name: Cursor
   m_TagString: Cursor
@@ -59,7 +60,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1102661771858638}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 195, y: 1, z: 65}
+  m_LocalPosition: {x: 65, y: 1, z: 25}
   m_LocalScale: {x: 0.95, y: 0.9, z: 0.95}
   m_Children:
   - {fileID: 4996417064574098}
@@ -73,7 +74,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1030405408675760}
   m_LocalRotation: {x: 0.53729963, y: -0, z: -0, w: 0.8433915}
-  m_LocalPosition: {x: 0, y: 98.3, z: -41.1}
+  m_LocalPosition: {x: 0, y: 54.9, z: -21.9}
   m_LocalScale: {x: 1.0526316, y: 1.0630767, z: 1.1006666}
   m_Children: []
   m_Father: {fileID: 4628816906757172}
@@ -191,9 +192,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fd8629859ea7cc84c83bd48ff589a3ed, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  caseId: 169
-  maxWidthCase: 25
-  maxHeightCase: 25
+  characterInfoPanel: {fileID: 0}
+  terrainInfoPanel: {fileID: 0}
+  characterPlacement: 1
+  caseId: 26
+  maxWidthCase: 10
+  maxHeightCase: 10
+  levelUpPanelActive: 0
 --- !u!114 &114625114909915902
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -218,6 +223,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d2115b0aafcc7eb429062e03ba6814c9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  victoryScreen: {fileID: 0}
+  defeatScreen: {fileID: 0}
 --- !u!114 &114719264131373032
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -230,6 +237,31 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   pauseMenu: {fileID: 0}
+--- !u!114 &114848582569491442
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1102661771858638}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0595515a3d6abdb42996a3fb26ebb518, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  starterCaseId: 1a000000250000002e0000002f000000
+  endTurnButton: {fileID: 0}
+  characterSelectionPanel: {fileID: 0}
+  levelUpPanel: {fileID: 0}
+  actionPanel: {fileID: 0}
+  skillTreePanel: {fileID: 0}
+  assassin: {fileID: 1866335460346174, guid: 29cab5f24139b534cacffbd1160fc424, type: 2}
+  mage: {fileID: 1584310648681926, guid: eb68c857cc8794f4f91e484480541666, type: 2}
+  ranger: {fileID: 1652543294826202, guid: 659971e3efda8654aa3b5d1b724bfd5c, type: 2}
+  warrior: {fileID: 1917064383561210, guid: 45e27f48eb8400e4bbceb70eb20e4b7e, type: 2}
+  isAssassinPlaced: 0
+  isMagePlaced: 0
+  isRangerPlaced: 0
+  isWarriorPlaced: 0
 --- !u!124 &124384639226764948
 Behaviour:
   m_ObjectHideFlags: 1

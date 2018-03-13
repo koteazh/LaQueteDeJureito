@@ -8,37 +8,98 @@ namespace Character {
 	
 	public class MageStats : ACharacterStats {
 		private const string characterClass = "Mage";
-		private Armor armor = new Armor();
-		private Weapon weapon = new Weapon();
-		private Dictionary<string, int> characterStats = new Dictionary<string, int>();
 		private static readonly Dictionary<string, int> statsIncrease = new Dictionary<string, int>
 		{
-			{ "Life", 35 },
-			{ "Strength", 0 },
-			{ "Intelligence", 75 },
+			{ "Life", 25 },
+			{ "Strength", 75 },
 			{ "Dexterity", 40 },
 			{ "Defense", 15 },
 			{ "Resistance", 65 },
 			{ "Agility", 30 },
 			{ "Movement", 0 },
-		};			
+		};
+		private int noShieldLife;
 
 		void Awake() {
 			DontDestroyOnLoad(transform.gameObject);
+			characterStats = new Dictionary<string, int> {
+				{ "Life", 25 },
+				{ "Strength", 20 },
+				{ "Dexterity", 20 },
+				{ "Defense", 5 },
+				{ "Resistance", 17 },
+				{ "Agility", 13 },
+				{ "Movement", 5 }
+			};
+			status = E_CharacterStatus.READY;
+			level = 1;
+			armor = gameObject.AddComponent<Armor> ();
+			armor.GetArmor (Armor.E_ArmorType.Light, Armor.E_ArmorQuality.Poor);
+			weapon = gameObject.AddComponent<Weapon> ();
+			weapon.GetWeapon (Weapon.E_WeaponType.Magic, Weapon.E_WeaponQuality.Poor);
+			bonusActive = false;
+			currentHealth = characterStats ["Life"];
 		}
 
 		public void Start()
 		{
-			characterStats ["Life"] = 25;
-			characterStats ["Strength"] = 0;
-			characterStats ["Intelligence"] = 20;
-			characterStats ["Dexterity"] = 20;
-			characterStats ["Defense"] = 5;
-			characterStats ["Resistance"] = 17;
-			characterStats ["Agility"] = 13;
-			characterStats ["Movement"] = 5;
+			characterStats = new Dictionary<string, int> {
+				{ "Life", 25 },
+				{ "Strength", 24 },
+				{ "Dexterity", 20 },
+				{ "Defense", 5 },
+				{ "Resistance", 19 },
+				{ "Agility", 13 },
+				{ "Movement", 5 }
+			};
 			status = E_CharacterStatus.READY;
 			level = 1;
+			armor = gameObject.AddComponent<Armor> ();
+			armor.GetArmor (Armor.E_ArmorType.Light, Armor.E_ArmorQuality.Poor);
+			weapon = gameObject.AddComponent<Weapon> ();
+			weapon.GetWeapon (Weapon.E_WeaponType.Magic, Weapon.E_WeaponQuality.Poor);
+			bonusActive = false;
+			currentHealth = characterStats ["Life"];
+		}
+
+		public override void ModifyCurrentHealth (int damage)
+		{
+			currentHealth -= damage;
+			if (currentHealth <= 0) {
+				levelUpPanel.SetActive (false);
+				gameObject.SetActive(false);
+				GameObject.Find ("Cursor").GetComponent<AiActionTurn>().checkDefeat();
+			}
+			if (currentHealth > characterStats["Life"])
+				currentHealth = characterStats["Life"];
+		}
+
+		public override void ResetHealth ()
+		{
+			currentHealth = characterStats ["Life"];
+		}
+
+		public override int GetCurrentHealth ()
+		{
+			return currentHealth;
+		}
+
+		public override int GetLevel()
+		{
+			return (level);
+		}
+
+		public override void GainExperience(int xpValue, int levelDifference)
+		{
+			int xpGained = xpValue + (2 * levelDifference) + 100;
+
+			if (xpGained < 0)
+				xpGained = 0;
+			xp += xpGained;
+			if (xp >= 100) {
+				xp -= 100;
+				LevelUp ();
+			}
 		}
 
 		public override void LevelUp ()
@@ -60,11 +121,36 @@ namespace Character {
 				}
 				levelUpPanel.transform.Find (stats.Key + "Row/StatsNewValue").GetComponent<Text>().text = characterStats [stats.Key].ToString();
 			}
+			GameObject.FindGameObjectWithTag ("Cursor").GetComponent<GameCursor>().levelUpPanelActive = true;
+			if (characterStats ["Resistance"] == 20) {
+				armor.GetArmor (Armor.E_ArmorType.Light, Armor.E_ArmorQuality.Common);
+			}
+			if (characterStats ["Resistance"] == 25) {
+				armor.GetArmor (Armor.E_ArmorType.Light, Armor.E_ArmorQuality.Excellent);
+			}
+			if (characterStats ["Strength"] == 25) {
+				weapon.GetWeapon (Weapon.E_WeaponType.Magic, Weapon.E_WeaponQuality.Common);
+			}
+			if (characterStats ["Strength"] == 30) {
+				weapon.GetWeapon (Weapon.E_WeaponType.Magic, Weapon.E_WeaponQuality.Excellent);
+			}
+		}
+
+		public override int GetExperience()
+		{
+			return (xp);
 		}
 
 		public override int GetCharacterStats(string statKey)
 		{
 			return characterStats [statKey];
+		}
+
+		public override void ModifyCharacterStat (string statKey, int value)
+		{
+			characterStats [statKey] += value;
+			if (characterStats [statKey] < 0)
+				characterStats [statKey] = 0;
 		}
 
 		public override int GetStatsIncrease(string statKey)
@@ -83,6 +169,11 @@ namespace Character {
 			levelUpPanel = _levelUpPanel;
 		}
 
+		public override void SetLevelUpPanelActive(bool active)
+		{
+			levelUpPanel.SetActive (active);
+		}
+
 		public override void SetActionsPanel(GameObject _actionsPanel)
 		{
 			actionsPanel = _actionsPanel;
@@ -90,13 +181,29 @@ namespace Character {
 
 		public override void SetActionsPanelActive(bool active)
 		{
+			if (gameObject.GetComponent<MageSkillTree> ().GetSpecialAttackType () != E_AttackType.NORMAL)
+				actionsPanel.GetComponent<ActionsPanelSetUp> ().ActivateSpecialAttackButton(true);
+			else
+				actionsPanel.GetComponent<ActionsPanelSetUp> ().ActivateSpecialAttackButton(false);
 			actionsPanel.SetActive (active);
 		}
 
-		public override void DisableMovement(bool _interactable)
+		public override void SetSkillTreePanel(GameObject _skillTreePanel)
 		{
-			GameObject moveButton = actionsPanel.transform.Find ("MoveButton").gameObject;
-			moveButton.GetComponent<Button> ().interactable = _interactable;
+			skillTreePanel = _skillTreePanel;
+		}
+
+		public override void SetSkillTreePanelActive(bool active)
+		{
+			if (active)
+				skillTreePanel.GetComponent<SkillTreePanelSetUp> ().FillTree (characterClass, level, gameObject.GetComponent<MageSkillTree>());
+			skillTreePanel.SetActive (active);
+		}
+
+		public override void DisableAction(string action, bool _interactable)
+		{
+			GameObject actionButton = actionsPanel.transform.Find (action + "Button").gameObject;
+			actionButton.GetComponent<Button> ().interactable = _interactable;
 		}
 
 		public override void SetStatus(E_CharacterStatus _status)
@@ -112,6 +219,71 @@ namespace Character {
 		public override Weapon.E_WeaponType GetWeaponType()
 		{
 			return (weapon.GetWeaponType());
+		}
+
+		public override bool IsBonusActive ()
+		{
+			return (bonusActive);
+		}
+
+		public override void AddWaitBonus()
+		{
+			if (gameObject.GetComponent<SkillTree> ().GetWaitSkill () == E_WaitSkill.INTANGIBILITY)
+				characterStats ["Agility"] += 15;
+			noShieldLife = currentHealth;
+			currentHealth += 10;
+			bonusActive = true;
+		}
+
+		public int GetShieldLife()
+		{
+			if (!bonusActive)
+				return (0);
+			int shieldRemainingLife = currentHealth - noShieldLife;
+			if (shieldRemainingLife > 0)
+				return (shieldRemainingLife);
+			else
+				return (0);
+		}
+
+		public override void RemoveWaitBonus()
+		{
+			if (bonusActive) {
+				if (gameObject.GetComponent<SkillTree> ().GetWaitSkill () == E_WaitSkill.INTANGIBILITY)
+					characterStats ["Agility"] -= 15;
+				if (currentHealth > noShieldLife)
+					currentHealth = noShieldLife;
+				bonusActive = false;
+			}
+		}
+
+		public override string GetCharacterClass ()
+		{
+			return characterClass;
+		}
+
+		public override Weapon GetWeapon ()
+		{
+			return (weapon);
+		}
+
+		public override Armor GetArmor ()
+		{
+			return (armor);
+		}
+
+		void Update()
+		{
+			if (Input.GetMouseButtonDown (0) && skillTreePanel != null && skillTreePanel.activeInHierarchy) {
+				Time.timeScale = 1;
+				SetLevelUpPanelActive (false);
+			}
+			if (levelUpPanel.activeInHierarchy && status == E_CharacterStatus.IS_WAITING) {
+				if (level >= 2 && level <= 4) {
+					SetSkillTreePanelActive (true);
+					Time.timeScale = 0;
+				}
+			}
 		}
 	}
 }

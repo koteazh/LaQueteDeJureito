@@ -21,6 +21,7 @@ public class MovementController : MonoBehaviour {
 
 	public void MoveToTarget(List<int> pathToTarget)
 	{
+		casePerRow = GameObject.FindGameObjectWithTag ("Terrain").GetComponent<TerrainRowLength> ().GetTerrainTilesPerRow();
 		path = pathToTarget;
 		if (path.Count > 0) {
 			target = Get3dCoordById (path[0]);
@@ -61,6 +62,10 @@ public class MovementController : MonoBehaviour {
 			if (path.Count > 0 && target_reached == false) {
 				transform.LookAt (target);
 			}
+		}
+
+		if (gameObject.GetComponent<Animator> ().GetBool ("isAttacking")) {
+			gameObject.GetComponent<Animator> ().SetBool ("isAttacking", false);
 		}
     }
 

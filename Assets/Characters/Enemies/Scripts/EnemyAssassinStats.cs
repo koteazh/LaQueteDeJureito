@@ -8,7 +8,10 @@ namespace Character {
 	
 	public class EnemyAssassinStats : AEnemyStats {
 		private const string characterClass = "Assassin";
-		private Weapon.E_WeaponType weaponType = Weapon.E_WeaponType.Dagger;
+		[SerializeField] private Weapon.E_WeaponType weaponType = Weapon.E_WeaponType.Dagger;
+		[SerializeField] private Weapon.E_WeaponQuality weaponQuality = Weapon.E_WeaponQuality.Poor;
+		[SerializeField] private Armor.E_ArmorType armorType = Armor.E_ArmorType.Medium;
+		[SerializeField] private Armor.E_ArmorQuality armorQuality = Armor.E_ArmorQuality.Poor;
 		public int Life = 30;
 		public int Strength = 15;
 		public int Dexterity = 15;
@@ -31,13 +34,50 @@ namespace Character {
 			characterStats ["Resistance"] = Resistance;
 			characterStats ["Agility"] = Agility;
 			characterStats ["Movement"] = Movement;
+			armor = gameObject.AddComponent<Armor> ();
+			armor.GetArmor (armorType, armorQuality);
+			weapon = gameObject.AddComponent<Weapon> ();
+			weapon.GetWeapon (weaponType, weaponQuality);
 			status = E_CharacterStatus.READY;
 			level = 1;
+			currentHealth = characterStats ["Life"];
+		}
+
+		public override void ModifyCurrentHealth (int damage)
+		{
+			currentHealth -= damage;
+			if (currentHealth <= 0) {
+				Destroy(gameObject);
+			}
+			if (currentHealth > characterStats["Life"])
+				currentHealth = characterStats["Life"];
+		}
+
+		public override void ResetHealth ()
+		{
+			currentHealth = characterStats ["Life"];
+		}
+
+		public override int GetCurrentHealth ()
+		{
+			return currentHealth;
+		}
+
+		public override int GetLevel()
+		{
+			return (level);
 		}
 
 		public override int GetCharacterStats(string statKey)
 		{
 			return characterStats [statKey];
+		}
+
+		public override void ModifyCharacterStat (string statKey, int value)
+		{
+			characterStats [statKey] += value;
+			if (characterStats [statKey] < 0)
+				characterStats [statKey] = 0;
 		}
 
 		public override void PrintStats()
@@ -64,6 +104,16 @@ namespace Character {
 		public override string GetCharacterClass ()
 		{
 			return characterClass;
+		}
+
+		public override Weapon GetWeapon ()
+		{
+			return (weapon);
+		}
+
+		public override Armor GetArmor ()
+		{
+			return (armor);
 		}
 	}
 }

@@ -1031,6 +1031,8 @@ GameObject:
   - component: {fileID: 95576045176689984}
   - component: {fileID: 114351978506025722}
   - component: {fileID: 136705351713627598}
+  - component: {fileID: 114184675683746842}
+  - component: {fileID: 114061457849453276}
   m_Layer: 0
   m_Name: WarriorPrefab
   m_TagString: Character
@@ -1437,8 +1439,8 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1917064383561210}
-  m_LocalRotation: {x: 0, y: 0.53729963, z: 0, w: 0.8433915}
-  m_LocalPosition: {x: 195, y: 0.5, z: 65}
+  m_LocalRotation: {x: 0, y: 0.8433915, z: -0, w: -0.5372995}
+  m_LocalPosition: {x: 65, y: 0.5, z: 45}
   m_LocalScale: {x: 5, y: 5, z: 5}
   m_Children:
   - {fileID: 4449933683188286}
@@ -1448,7 +1450,7 @@ Transform:
   - {fileID: 4328515727404898}
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 65, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 245, z: 0}
 --- !u!4 &4324994900584276
 Transform:
   m_ObjectHideFlags: 1
@@ -2130,6 +2132,29 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
+--- !u!114 &114061457849453276
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1917064383561210}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a4be92e9723d4934d811c0830ef95e49, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  level: 1
+--- !u!114 &114184675683746842
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1917064383561210}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d23ca314d7c64cb4e9b7410b02f439a9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &114351978506025722
 MonoBehaviour:
   m_ObjectHideFlags: 1

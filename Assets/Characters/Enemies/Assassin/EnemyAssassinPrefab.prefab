@@ -247,9 +247,10 @@ GameObject:
   - component: {fileID: 95545076235951628}
   - component: {fileID: 114625769435009836}
   - component: {fileID: 114512871407018012}
+  - component: {fileID: 136901980722505312}
   m_Layer: 0
   m_Name: EnemyAssassinPrefab
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1869,15 +1870,15 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1244599002323444}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 185.94, y: 68.4, z: 37.27}
+  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
+  m_LocalPosition: {x: 65, y: 0.5, z: 85}
   m_LocalScale: {x: 3, y: 3, z: 3}
   m_Children:
   - {fileID: 4704433777735402}
   - {fileID: 4686810382861526}
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
 --- !u!4 &4919277374343976
 Transform:
   m_ObjectHideFlags: 1
@@ -1991,7 +1992,7 @@ Animator:
   m_Controller: {fileID: 9100000, guid: f8ba70a230ff5a14780e6d4f44329cc1, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
-  m_ApplyRootMotion: 1
+  m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
@@ -2007,8 +2008,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 95434ac644e207249b78cdebd729406c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  level: 1
+  weaponType: 1
+  weaponQuality: 0
+  armorType: 1
+  armorQuality: 0
   Life: 30
-  Strength: 15
+  Strength: 13
   Dexterity: 15
   Defense: 7
   Resistance: 13
@@ -2025,6 +2031,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ae187bd0ba279a24eadbba954ef29e12, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!136 &136901980722505312
+CapsuleCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1244599002323444}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  m_Radius: 0.5
+  m_Height: 1.7
+  m_Direction: 1
+  m_Center: {x: 0, y: 0.9, z: 0}
 --- !u!137 &137613428063334654
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1

@@ -10,13 +10,19 @@ public class AiActionTurn : MonoBehaviour {
 	private List<GameObject> activeAi;
 	private GameObject controlledAi;
 	private bool initAiTurn = false;
-	private bool playerTurn = false;
+	private bool playerTurn = true;
 	private bool isControllingAi = false;
 	private bool enemyIsWaiting = true;
+	public GameObject victoryScreen;
+	public GameObject defeatScreen;
 
 	void Start () {
 		activeAi = new List<GameObject> ();
 		existingAi = GameObject.FindGameObjectsWithTag ("Enemy");
+	}
+
+	void Awake () {
+		this.enabled = false;
 	}
 
 	public bool GetPlayerTurn()
@@ -35,15 +41,17 @@ public class AiActionTurn : MonoBehaviour {
 
 	private void GetActiveAi ()
 	{
-		if (existingAi.Length == 0)
-			existingAi = GameObject.FindGameObjectsWithTag ("Enemy");
+		activeAi = new List<GameObject>();
+		existingAi = GameObject.FindGameObjectsWithTag ("Enemy");
 		if (existingAi.Length == 0) {
 			isControllingAi = false;
 			print ("VICTORY");
 		}
 		foreach (GameObject enemy in existingAi) {
-			if (enemy.GetComponent<Character.AEnemyStats> ().GetStatus () == Character.E_CharacterStatus.READY) {
-				activeAi.Add (enemy);
+			if (enemy != null) {
+				if (enemy.GetComponent<Character.AEnemyStats> ().GetStatus () == Character.E_CharacterStatus.READY) {
+					activeAi.Add (enemy);
+				}
 			}
 		}
 	}
@@ -52,6 +60,8 @@ public class AiActionTurn : MonoBehaviour {
 	{
 		foreach (GameObject character in charactersArray) {
 			character.GetComponent<Character.AStats> ().SetStatus (Character.E_CharacterStatus.READY);
+			if (playerTurn == true)
+				character.GetComponent<Character.ACharacterStats> ().RemoveWaitBonus ();
 		}
 	}
 
@@ -66,15 +76,28 @@ public class AiActionTurn : MonoBehaviour {
 
 	private bool CharacterStillActive ()
 	{
-		if (existingCharacters.Length == 0) {
-			playerTurn = false;
-			print ("GAME OVER");
-		}
 		foreach (GameObject character in existingCharacters) {
-			if (character.GetComponent<Character.AStats> ().GetStatus () == Character.E_CharacterStatus.READY)
+			if (character.GetComponent<Character.AStats> ().GetStatus () != Character.E_CharacterStatus.IS_WAITING){
 				return true;
+			}
 		}
 		return false;
+	}
+
+	public void checkDefeat()
+	{
+		if (GameObject.FindGameObjectsWithTag ("Character").Length == 0)
+			DisplayDefeatScreen ();
+	}
+
+	private void DisplayVictoryScreen()
+	{
+		victoryScreen.SetActive (true);
+	}
+
+	private void DisplayDefeatScreen()
+	{
+		defeatScreen.SetActive (true);
 	}
 
 	// Update is called once per frame
@@ -82,31 +105,46 @@ public class AiActionTurn : MonoBehaviour {
 
 		if (playerTurn == true) {
 			existingCharacters = GameObject.FindGameObjectsWithTag ("Character");
-			if (CharacterStillActive () == false) {
-				ResetStatus (GameObject.FindGameObjectsWithTag ("Character"));
+			if (existingCharacters.Length == 0) {
 				playerTurn = false;
+				DisplayDefeatScreen ();
+				print ("GAME OVER");
+			} else {
+				if (CharacterStillActive () == false) {
+					ResetStatus (GameObject.FindGameObjectsWithTag ("Character"));
+					playerTurn = false;
+				}
 			}
 		}
 
 		if (initAiTurn == true) {
 			ResetStatus (GameObject.FindGameObjectsWithTag ("Enemy"));
 			GetActiveAi ();
-			controlledAi = activeAi [0];
-			initAiTurn = false;
-			isControllingAi = true;
-			controlledAi.GetComponent<AiController> ().GetCharactersInRange ();
+			if (activeAi.Count != 0) {
+				controlledAi = activeAi [0];
+				initAiTurn = false;
+				isControllingAi = true;
+				controlledAi.GetComponent<AiController> ().GetCharactersInRange ();
+			} else {
+				DisplayVictoryScreen ();
+			}
 		}
 
 		if (isControllingAi == true) {
-			if (controlledAi.GetComponent<Character.AEnemyStats> ().GetStatus () == Character.E_CharacterStatus.IS_WAITING) {
-				activeAi.RemoveAt (0);
-				if (activeAi.Count > 0) {
-					controlledAi = activeAi [0];
-					controlledAi.GetComponent<AiController> ().GetCharactersInRange ();
-				} else {
-					isControllingAi = false;
-					playerTurn = true;
+			if (controlledAi != null) {
+				if (controlledAi.GetComponent<Character.AEnemyStats> ().GetStatus () == Character.E_CharacterStatus.IS_WAITING) {
+					activeAi.RemoveAt (0);
+					GetActiveAi ();
+					if (activeAi.Count != 0) {
+						controlledAi = activeAi [0];
+						controlledAi.GetComponent<AiController> ().GetCharactersInRange ();
+					} else {
+						isControllingAi = false;
+						playerTurn = true;
+					}
 				}
+			} else {
+				initAiTurn = true;
 			}
 		}
 	}

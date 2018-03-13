@@ -11,11 +11,13 @@ public class AiController : MonoBehaviour {
 	private GameObject target;
 	private Vector3 movementTarget;
 	private GameObject closestTarget;
+	private CombatInfo combatInfo;
 	private int smallestMovementCost = -1;
 	private List<int> shortestPath;
 	private bool isTargetSelected = false;
 	private bool is_moving = false;
 	private bool target_reached = false;
+	private bool canAttack = false;
 	int i = 0;
 	private int mapRowLength;
 
@@ -69,13 +71,14 @@ public class AiController : MonoBehaviour {
 		int totalMovementCost = 0;
 		GameObject[] characterPresent = GameObject.FindGameObjectsWithTag ("Character");
 		Collider[] colliders;
+		charactersInRange = new List<GameObject> ();
+		pathsToTarget = new Dictionary<GameObject, AiPath> ();
+		smallestMovementCost = -1;
+		print (gameObject);
 
 		foreach (GameObject potentialTarget in characterPresent) {
+			print ("potential target : " + potentialTarget);
 			AiPath path = new AiPath (GetIdByCoord(gameObject.transform.position.x, gameObject.transform.position.z));
-
-			print (gameObject.transform.position.x);
-			print (gameObject.transform.position.z);
-
 			target = potentialTarget;
 			GetPathsToTarget (0, path);
 			shortestPath = path.GetShortestPath (path);
@@ -89,7 +92,7 @@ public class AiController : MonoBehaviour {
 					foreach(Collider collider in colliders)
 					{
 						GameObject go = collider.gameObject;
-						if (go.tag == "Character" || go.tag == "Enemy") {
+						if ((go.tag == "Character" && go != potentialTarget ) || go.tag == "Enemy") {
 							totalMovementCost += 100;
 						}
 					}
@@ -106,10 +109,17 @@ public class AiController : MonoBehaviour {
 			}
 		}
 		if (charactersInRange.Count >= 2) {
+			print ("W");
 			SelectTarget (charactersInRange);
+			print (target);
+			canAttack = true;
 		} else if (charactersInRange.Count == 1) {
+			print ("T");
 			target = charactersInRange [0];
+			canAttack = true;
 		} else {
+			print ("F");
+			canAttack = false;
 			target = closestTarget;
 			AiPath path = new AiPath (GetIdByCoord(gameObject.transform.position.x, gameObject.transform.position.z));
 			GetPathsToTarget (0, path);
@@ -268,23 +278,39 @@ public class AiController : MonoBehaviour {
 		else
 			SelectDamageableTarget (targetList, defenseStatName);
 		return (target);
-/*			SELECTION DE LA CIBLE LA PLUS PROCHE
- 		nearestTarget = -1;
-		target = targetList [0];
-		foreach (GameObject possibleTarget in targetList)
-		{
-			targetDistance = GetTargetDistance (possibleTarget);
-			if (nearestTarget == -1 || targetDistance < nearestTarget)
-			{
-				nearestTarget = targetDistance;
-				target = possibleTarget;
-			}
-		}
-*/
 	}
 
 	private void AttackTarget ()
 	{
+		print ("ATTAAAACK !");
+		int caseId = GetIdByCoord (gameObject.transform.position.x, gameObject.transform.position.z);
+		int hitChance = combatInfo.GetHitChance (target.GetComponent<Character.AStats>(), gameObject.GetComponent<Character.AStats>(), GameObject.Find ("Case_" + caseId).GetComponent<Case> (), E_AttackType.NORMAL);
+		int damage = combatInfo.GetDamage (target.GetComponent<Character.AStats>(), gameObject.GetComponent<Character.AStats>(), E_AttackType.NORMAL);
+		int hitScore = UnityEngine.Random.Range (0, 100);
+		Character.ACharacterStats targetStats = target.GetComponent<Character.ACharacterStats> ();
+		Character.AEnemyStats aiStats = gameObject.GetComponent<Character.AEnemyStats> ();
+		print (damage);
+
+		gameObject.GetComponent<Character.AEnemyStats> ().SetStatus (Character.E_CharacterStatus.HAS_ATTACKED);
+		gameObject.GetComponent<Animator> ().SetBool ("isAttacking", true);
+		if (hitScore <= hitChance) {
+			targetStats.ModifyCurrentHealth (damage);
+			int absorbedDamage;
+			if (damage > 0) {
+				if (gameObject.GetComponent<Character.AEnemyStats> ().GetWeapon ().GetWeaponType () == Weapon.E_WeaponType.Magic) {
+					absorbedDamage = targetStats.GetCharacterStats ("Resistance") + targetStats.GetArmor ().magicalProtection;
+				} else {
+					absorbedDamage = targetStats.GetCharacterStats ("Defense") + targetStats.GetArmor ().physicalProtection;
+				}
+			} else {
+				absorbedDamage = aiStats.GetCharacterStats ("Strength") + aiStats.GetWeapon ().damage;
+			}
+			targetStats.GainExperience(absorbedDamage, aiStats.GetLevel() - targetStats.GetLevel());
+		} else {
+			if (target.GetComponent<Character.SkillTree> ().GetPassiveSkill() == E_PassiveSkill.PARRY_RIPOSTE)
+				gameObject.GetComponent<Character.AStats> ().ModifyCurrentHealth (5);
+			targetStats.GainExperience(10, aiStats.GetLevel() - targetStats.GetLevel());
+		}
 	}
 
 	private Vector2 GetDirection ()
@@ -303,8 +329,8 @@ public class AiController : MonoBehaviour {
 		Vector2 position = GetCoordById (_parent.caseId);
 		Collider[] colliders;
 
-		if (targetDistance > 6)
-			targetDistance = 6;
+		if (targetDistance > 10)
+			targetDistance = 10;
 		movementCount++;
 		if (position.x != target.transform.position.x) {
 			GameObject terrainCase = GameObject.Find ("Case_" + GetIdByCoord (position.x + 10 * direction.x, position.y));
@@ -316,7 +342,7 @@ public class AiController : MonoBehaviour {
 				{
 					GameObject go = collider.gameObject; 
 					if (go.tag == "Character" || go.tag == "Enemy") {
-						pathValue = 100+ _parent.pathValue;
+						pathValue = 100 + _parent.pathValue;
 					}
 				}
 			}
@@ -353,25 +379,27 @@ public class AiController : MonoBehaviour {
 		}
 	}
 
+	public void SetUpCombatInfo (CombatInfo _combatInfo)
+	{
+		combatInfo = _combatInfo;
+	}
+
 	void Update()
 	{
 		if (gameObject.GetComponent<Animator> ().GetBool ("hasDodge")) {
 			gameObject.GetComponent<Animator> ().SetBool ("hasDodge", false);
-			i++;
 		}
 		if (gameObject.GetComponent<Animator> ().GetBool ("isHit")) {
 			gameObject.GetComponent<Animator> ().SetBool ("isHit", false);
-			i++;
 		}
-		if (gameObject.GetComponent<Animator> ().GetBool ("isAttacking")) {
+		if (gameObject.GetComponent<Animator> ().GetCurrentAnimatorStateInfo (0).IsName ("Attack")) {
 			gameObject.GetComponent<Animator> ().SetBool ("isAttacking", false);
-			i++;
 		}
-		if (gameObject.GetComponent<Animator> ().GetBool ("isDead")) {
-			gameObject.GetComponent<Animator> ().SetBool ("isDead", false);
-			i++;
-		}
+//		if (gameObject.GetComponent<Animator> ().GetBool ("isDead")) {
+//			gameObject.GetComponent<Animator> ().SetBool ("isDead", false);
+//		}
 		if (isTargetSelected == true) {
+
 /*				TEST ANIMATIONS
 			if (i == 0)
 				gameObject.GetComponent<Animator> ().SetBool ("hasDodge", true);
@@ -389,8 +417,10 @@ public class AiController : MonoBehaviour {
 			AiPath Path = pathsToTarget[target];
 			shortestPath = Path.GetMaxMovementPath(Path, gameObject.GetComponent<Character.AEnemyStats>().GetCharacterStats("Movement"));
 			if (shortestPath.Count == 0) {
+				print ("nomove");
 				gameObject.GetComponent<Character.AEnemyStats> ().SetStatus (Character.E_CharacterStatus.HAS_MOVED);
 			} else {
+				print ("move");
 				movementTarget = Get3dCoordById (shortestPath [0]);
 				is_moving = true;
 			}
@@ -399,13 +429,25 @@ public class AiController : MonoBehaviour {
 
 		if (target_reached == true)
 		{
-			if (shortestPath.Count == 0)
+			if (shortestPath.Count == 0 && gameObject.GetComponent<Character.AEnemyStats> ().GetStatus () != Character.E_CharacterStatus.IS_WAITING)
 			{
 				is_moving = false;
 				target_reached = false;
 				gameObject.GetComponent<Animator>().SetBool("isMoving", false);
 				gameObject.GetComponent<Character.AEnemyStats>().SetStatus(Character.E_CharacterStatus.HAS_MOVED);
 				transform.LookAt (target.transform.position);
+
+				Collider[] colliders;
+				if((colliders = Physics.OverlapSphere(gameObject.transform.position, 5f)).Length > 1)
+				{
+					foreach(Collider collider in colliders)
+					{
+						GameObject go = collider.gameObject;
+						if (go.tag == "Trap") {
+							gameObject.GetComponent<Character.AStats> ().ModifyCurrentHealth (3);
+						}
+					}
+				}
 			}
 			else
 			{
@@ -430,9 +472,16 @@ public class AiController : MonoBehaviour {
 				transform.LookAt (movementTarget);
 			}
 		}
-		if (gameObject.GetComponent<Character.AEnemyStats> ().GetStatus () == Character.E_CharacterStatus.HAS_MOVED) {
-			AttackTarget ();
-			gameObject.GetComponent<Character.AEnemyStats>().SetStatus(Character.E_CharacterStatus.IS_WAITING);
+		if (gameObject.GetComponent<Character.AEnemyStats> ().GetStatus () == Character.E_CharacterStatus.HAS_MOVED && !gameObject.GetComponent<Animator> ().IsInTransition (0) && !gameObject.GetComponent<Animator> ().GetBool ("isAttacking")) {
+			if (canAttack) {
+				AttackTarget ();
+			} else {
+				gameObject.GetComponent<Character.AEnemyStats> ().SetStatus (Character.E_CharacterStatus.HAS_ATTACKED);
+			}
+		}
+		if (gameObject.GetComponent<Character.AEnemyStats> ().GetStatus () == Character.E_CharacterStatus.HAS_ATTACKED && gameObject.GetComponent<Animator> ().GetCurrentAnimatorStateInfo (0).IsName ("Idle") && !gameObject.GetComponent<Animator> ().GetBool ("isAttacking")) {
+			print ("youyou");
+			gameObject.GetComponent<Character.AEnemyStats> ().SetStatus (Character.E_CharacterStatus.IS_WAITING);
 		}
 	}
 }

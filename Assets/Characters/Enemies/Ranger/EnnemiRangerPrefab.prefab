@@ -127,9 +127,10 @@ GameObject:
   - component: {fileID: 95800168805416858}
   - component: {fileID: 114009074292400700}
   - component: {fileID: 114322259002823296}
+  - component: {fileID: 136207115383197538}
   m_Layer: 0
   m_Name: EnnemiRangerPrefab
-  m_TagString: Untagged
+  m_TagString: Enemy
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -1099,8 +1100,8 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1088024964602690}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 215, y: 0, z: 75}
+  m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
+  m_LocalPosition: {x: 25, y: 0.5, z: 85}
   m_LocalScale: {x: 3, y: 3, z: 3}
   m_Children:
   - {fileID: 4686699091802728}
@@ -1108,7 +1109,7 @@ Transform:
   - {fileID: 4509206097373950}
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
 --- !u!4 &4078110773654644
 Transform:
   m_ObjectHideFlags: 1
@@ -2024,7 +2025,7 @@ Animator:
   m_Controller: {fileID: 9100000, guid: ad91cfe8005cf8f40b553c990342a694, type: 2}
   m_CullingMode: 1
   m_UpdateMode: 0
-  m_ApplyRootMotion: 1
+  m_ApplyRootMotion: 0
   m_LinearVelocityBlending: 0
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
@@ -2051,13 +2052,31 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4b2c83dcd5c9a54419f9f649020c9841, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  level: 1
+  weaponType: 2
+  weaponQuality: 0
+  armorType: 1
+  armorQuality: 0
   Life: 25
-  Strength: 13
+  Strength: 10
   Dexterity: 25
   Defense: 7
   Resistance: 7
   Agility: 23
   Movement: 6
+--- !u!136 &136207115383197538
+CapsuleCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1088024964602690}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  m_Radius: 0.5
+  m_Height: 1.7
+  m_Direction: 1
+  m_Center: {x: 0, y: 0.9, z: 0}
 --- !u!137 &137837416512101868
 SkinnedMeshRenderer:
   m_ObjectHideFlags: 1

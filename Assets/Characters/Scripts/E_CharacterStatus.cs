@@ -8,7 +8,8 @@ namespace Character
 		HAS_MOVED,
 		HAS_ATTACKED,
 		IS_WAITING,
-		IN_MOVEMENT
+		IN_MOVEMENT,
+		SELECT_TARGET
 	}
 }
 

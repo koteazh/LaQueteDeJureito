@@ -7,7 +7,10 @@ namespace Character {
 	
 	public class EnemyWarriorStats : AEnemyStats {
 		private const string characterClass = "Warrior";
-		private Weapon.E_WeaponType weaponType = Weapon.E_WeaponType.Sword;
+		[SerializeField] private Weapon.E_WeaponType weaponType = Weapon.E_WeaponType.Sword;
+		[SerializeField] private Weapon.E_WeaponQuality weaponQuality = Weapon.E_WeaponQuality.Poor;
+		[SerializeField] private Armor.E_ArmorType armorType = Armor.E_ArmorType.Heavy;
+		[SerializeField] private Armor.E_ArmorQuality armorQuality = Armor.E_ArmorQuality.Poor;
 		public int Life = 45;
 		public int Strength = 15;
 		public int Dexterity = 12;
@@ -16,16 +19,6 @@ namespace Character {
 		public int Agility = 11;
 		public int Movement = 5;
 		private Dictionary<string, int> characterStats = new Dictionary<string, int>();
-		private static readonly Dictionary<string, int> statsIncrease = new Dictionary<string, int>
-		{
-			{ "Life", 75 },
-			{ "Strength", 65 },
-			{ "Dexterity", 30 },
-			{ "Defense", 50 },
-			{ "Resistance", 10 },
-			{ "Agility", 20 },
-			{ "Movement", 0 },
-		};
 
 		void Awake() {
 			DontDestroyOnLoad(transform.gameObject);
@@ -40,13 +33,50 @@ namespace Character {
 			characterStats ["Resistance"] = Resistance;
 			characterStats ["Agility"] = Agility;
 			characterStats ["Movement"] = Movement;
+			armor = gameObject.AddComponent<Armor> ();
+			armor.GetArmor (armorType, armorQuality);
+			weapon = gameObject.AddComponent<Weapon> ();
+			weapon.GetWeapon (weaponType, weaponQuality);
 			status = E_CharacterStatus.READY;
 			level = 1;
+			currentHealth = characterStats ["Life"];
+		}
+
+		public override void ModifyCurrentHealth (int damage)
+		{
+			currentHealth -= damage;
+			if (currentHealth <= 0) {
+				Destroy(gameObject);
+			}
+			if (currentHealth > characterStats["Life"])
+				currentHealth = characterStats["Life"];
+		}
+
+		public override void ResetHealth ()
+		{
+			currentHealth = characterStats ["Life"];
+		}
+
+		public override int GetCurrentHealth ()
+		{
+			return currentHealth;
+		}
+
+		public override int GetLevel()
+		{
+			return (level);
 		}
 
 		public override int GetCharacterStats(string statKey)
 		{
 			return characterStats [statKey];
+		}
+
+		public override void ModifyCharacterStat (string statKey, int value)
+		{
+			characterStats [statKey] += value;
+			if (characterStats [statKey] < 0)
+				characterStats [statKey] = 0;
 		}
 
 		public override void PrintStats()
@@ -73,6 +103,16 @@ namespace Character {
 		public override string GetCharacterClass ()
 		{
 			return characterClass;
+		}
+
+		public override Weapon GetWeapon ()
+		{
+			return (weapon);
+		}
+
+		public override Armor GetArmor ()
+		{
+			return (armor);
 		}
 	}
 }

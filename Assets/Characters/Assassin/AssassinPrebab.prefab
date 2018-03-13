@@ -1045,6 +1045,8 @@ GameObject:
   - component: {fileID: 95222354906187746}
   - component: {fileID: 114622655146150222}
   - component: {fileID: 136351342785524660}
+  - component: {fileID: 114372657948968240}
+  - component: {fileID: 114745370161266884}
   m_Layer: 0
   m_Name: AssassinPrebab
   m_TagString: Character
@@ -1544,7 +1546,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1866335460346174}
   m_LocalRotation: {x: 0, y: 0.38268343, z: 0, w: 0.92387956}
-  m_LocalPosition: {x: 215, y: 0.5, z: 65}
+  m_LocalPosition: {x: 65, y: 0.5, z: 25}
   m_LocalScale: {x: 5, y: 5, z: 5}
   m_Children:
   - {fileID: 4891334819205426}
@@ -2392,6 +2394,17 @@ Animator:
   m_WarningMessage: 
   m_HasTransformHierarchy: 1
   m_AllowConstantClipSamplingOptimization: 1
+--- !u!114 &114372657948968240
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1866335460346174}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: baea0e49fec8a27429c0eb2e31bd4a58, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &114622655146150222
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -2403,6 +2416,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0fc52fc4a3a011b488e1bbea155635da, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &114745370161266884
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1866335460346174}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0a5a9834e5eb57a479d171996cd0ea4f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  level: 1
 --- !u!136 &136351342785524660
 CapsuleCollider:
   m_ObjectHideFlags: 1

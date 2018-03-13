@@ -1,0 +1,15 @@
+﻿using System;
+
+public enum E_WaitSkill
+{
+	NONE,
+	WHETSTONE,
+	WARRIOR_REST,
+	VIGILANCE,
+	DISPELL_MAGIC,
+	LAYTRAP,
+	OCCULTATION,
+	INTANGIBILITY,
+	REACTIVE_SHIELD
+}
+

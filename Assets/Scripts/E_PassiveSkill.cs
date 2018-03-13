@@ -1,0 +1,15 @@
+﻿using System;
+
+public enum E_PassiveSkill
+{
+	NONE,
+	BERSERKER,
+	MIND_FORTRESS,
+	PARRY_RIPOSTE,
+	AMBUSH,
+	ADVENTURER,
+	SNIPER,
+	ERRATIC_BOUNCE,
+	REGENERATINON_AURA
+}
+
